@@ -29,7 +29,7 @@ def notify_user(status_code):
 
 def main():
     response = requests.get(MONITOR_URL, timeout=5)
-    if response.status_code == 200:
+    if response.status_code != 200:
         notify_user(response.status_code)
 
 
