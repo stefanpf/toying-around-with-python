@@ -19,17 +19,17 @@ def notify_user(status_code):
         smtp.ehlo()
         smtp.login(EMAIL_ADDRESS_SENDER, EMAIL_PASSWORD)
 
-        subject = f'{MONITOR_URL} IS DOWN!'
-        body = f"""GET request failed, status code != 200.\n\n
-               Received status code: {status_code}
-                """
-        msg = f'Subject: {subject}\n\n{body}'
+        subject = '{} IS DOWN!'.format(MONITOR_URL)
+        body = """GET request failed, status code != 200.\n\n
+               Received status code: {}
+               """.format(status_code)
+        msg = 'Subject: {}\n\n{}'.format(subject, body)
         smtp.sendmail(EMAIL_ADDRESS_SENDER, EMAIL_ADDRESS_RECEIVER, msg)
 
 
 def main():
     response = requests.get(MONITOR_URL, timeout=5)
-    if response.status_code != 200:
+    if response.status_code == 200:
         notify_user(response.status_code)
 
 
