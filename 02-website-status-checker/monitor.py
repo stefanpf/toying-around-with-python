@@ -19,7 +19,7 @@ if response.status_code != 200:
         smtp.ehlo()
         smtp.login(EMAIL_ADDRESS_SENDER, EMAIL_PASSWORD)
 
-        subject = 'stefanpfeuffer.com IS DOWN!'
+        subject = f'{MONITOR_URL} IS DOWN!'
         body = 'GET request failed, status code != 200.'
         msg = f'Subject: {subject}\n\n{body}'
         smtp.sendmail(EMAIL_ADDRESS_SENDER, EMAIL_ADDRESS_RECEIVER, msg)
