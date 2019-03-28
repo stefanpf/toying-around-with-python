@@ -11,18 +11,27 @@ EMAIL_ADDRESS_RECEIVER = os.environ.get('EMAIL_ADDRESS_RECEIVER')
 MONITOR_URL = os.environ.get('MONITOR_URL')
 SMTP_SERVER = os.environ.get('SMTP_SERVER')
 
-response = requests.get(MONITOR_URL, timeout=5)
 
-# if response.status_code != 200:
-with smtplib.SMTP(SMTP_SERVER, 587) as smtp:
-    smtp.ehlo()
-    smtp.starttls()
-    smtp.ehlo()
-    smtp.login(EMAIL_ADDRESS_SENDER, EMAIL_PASSWORD)
+def notify_user(status_code):
+    with smtplib.SMTP(SMTP_SERVER, 587) as smtp:
+        smtp.ehlo()
+        smtp.starttls()
+        smtp.ehlo()
+        smtp.login(EMAIL_ADDRESS_SENDER, EMAIL_PASSWORD)
 
-    subject = f'{MONITOR_URL} IS DOWN!'
-    body = f"""GET request failed, status code != 200.\n\n
-           Received status code: {response.status_code}
-            """
-    msg = f'Subject: {subject}\n\n{body}'
-    smtp.sendmail(EMAIL_ADDRESS_SENDER, EMAIL_ADDRESS_RECEIVER, msg)
+        subject = f'{MONITOR_URL} IS DOWN!'
+        body = f"""GET request failed, status code != 200.\n\n
+               Received status code: {status_code}
+                """
+        msg = f'Subject: {subject}\n\n{body}'
+        smtp.sendmail(EMAIL_ADDRESS_SENDER, EMAIL_ADDRESS_RECEIVER, msg)
+
+
+def main():
+    response = requests.get(MONITOR_URL, timeout=5)
+    if response.status_code != 200:
+        notify_user(response.status_code)
+
+
+if __name__ == '__main__':
+    main()
